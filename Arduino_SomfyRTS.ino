@@ -1,4 +1,5 @@
 #include <EEPROM.h>
+#include <Wire.h>
 #define PORT_TX 5
  
 #define SYMBOL 640
@@ -9,6 +10,9 @@
 #define EEPROM_ADDRESS 0
  
 #define VERSION 1
+
+// Define Slave I2C Address
+#define SLAVE_ADDR 9
 
 //Adapted from https://www.romainpiquard.fr/article-133-controler-ses-volets-somfy-avec-un-arduino.php
 
@@ -37,10 +41,13 @@ uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
 void BuildFrame(unsigned long remoteID, unsigned int rollingCode, byte *frame, byte button);
 void SendCommand(byte *frame, byte sync);
 void processRTSCommand(String data);
+void readSerial();
+void receiveI2C();
  
  
 void setup()
 {
+  Wire.begin(SLAVE_ADDR);
   Serial.begin(115200);
   DDRD |= 1<<PORT_TX;
   PORTD &= !(1<<PORT_TX);
@@ -66,25 +73,39 @@ void setup()
     Serial.print("\tRemote ID : "); Serial.println(currentRemote.remoteID, HEX);
     Serial.print("\tCurrent counter : "); Serial.println(currentRemote.rollingCode);
   }
+
+  Wire.onReceive(receiveI2C);
 }
  
 void loop()
 {
+  readSerial();
+  delay(10);
+}
+
+void receiveI2C() {
+  if (Wire.available()) { // slave may send less than requested
+    char instruction = Wire.read(); // receive a byte as character
+    int remote = Wire.read();
+    processRTSCommand(instruction, remote);
+  }
+}
+
+
+void readSerial() {
   if (Serial.available())
   {
-    String data = "";
     char instruction = Serial.read();
     int remote = Serial.parseInt();
-    
     while (Serial.available())
     {
       Serial.read();
+      delay(10);
     }
-
     Serial.print("Data: " + String(instruction) + "," + String(remote));
     Serial.println(); 
     processRTSCommand(instruction, remote);
-  }
+  }  
 }
 
 
