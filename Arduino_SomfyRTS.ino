@@ -36,8 +36,6 @@ struct SomfyController
 SomfyController somfyControllers;
 Remote newRemotes [remoteCount];
 
-uint8_t mac[6] = {0x00,0x01,0x02,0x03,0x04,0x05};
- 
 void BuildFrame(unsigned long remoteID, unsigned int rollingCode, byte *frame, byte button);
 void SendCommand(byte *frame, byte sync);
 void processRTSCommand(String data);
@@ -48,7 +46,7 @@ void receiveI2C();
 void setup()
 {
   Wire.begin(SLAVE_ADDR);
-  Serial.begin(115200);
+  Serial.begin(9600);
   DDRD |= 1<<PORT_TX;
   PORTD &= !(1<<PORT_TX);
  
@@ -60,7 +58,8 @@ void setup()
     somfyControllers.appVersion = VERSION;
     
     for (int i=0; i< remoteCount; i++) {
-      newRemotes[i] = {0x123456 + i, 0};
+      newRemotes[i] = {0x123456 + i, 0}; //original
+      //newRemotes[i] = {0x223456 + i, 0};
     }
     memcpy(&somfyControllers.remotes, &newRemotes, sizeof(newRemotes));
     EEPROM.put(EEPROM_ADDRESS, somfyControllers);
@@ -87,6 +86,8 @@ void receiveI2C() {
   if (Wire.available()) { // slave may send less than requested
     char instruction = Wire.read(); // receive a byte as character
     int remote = Wire.read();
+    //Serial.print("Data: " + String(instruction) + "," + String(remote));
+    //Serial.println(); 
     processRTSCommand(instruction, remote);
   }
 }
@@ -102,8 +103,8 @@ void readSerial() {
       Serial.read();
       delay(10);
     }
-    Serial.print("Data: " + String(instruction) + "," + String(remote));
-    Serial.println(); 
+    //Serial.print("Data: " + String(instruction) + "," + String(remote));
+    //Serial.println(); 
     processRTSCommand(instruction, remote);
   }  
 }
