@@ -4,7 +4,7 @@ Arduino remote for Somfy RTS blinds, with I2C interface.
 
 Based on https://www.romainpiquard.fr/article-133-controler-ses-volets-somfy-avec-un-arduino.php
 
-With I2C connection on pins A4,A5 (for [Arduino_MQTT_I2C](https://github.com/richardbounds/Arduino_MQTT_I2C))
+With I2C connection on pins A4,A5 (for openHAB control with [Arduino_MQTT_I2C](https://github.com/richardbounds/Arduino_MQTT_I2C))
 
 Working with:
 - Arduino Nano v3 (AZDelivery clones didn't work, but [this one](https://www.ebay.co.uk/itm/Arduino-Nano-Mini-Pro-R3-compatible-board-with-USB-lead-ATmega328-UK-Supplier/133519577527) did)
