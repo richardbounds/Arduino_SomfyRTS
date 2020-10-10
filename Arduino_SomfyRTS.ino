@@ -58,8 +58,7 @@ void setup()
     somfyControllers.appVersion = VERSION;
     
     for (int i=0; i< remoteCount; i++) {
-      newRemotes[i] = {0x123456 + i, 0}; //original
-      //newRemotes[i] = {0x223456 + i, 0};
+      newRemotes[i] = {0x123456 + i, 0}; 
     }
     memcpy(&somfyControllers.remotes, &newRemotes, sizeof(newRemotes));
     EEPROM.put(EEPROM_ADDRESS, somfyControllers);
@@ -86,8 +85,6 @@ void receiveI2C() {
   if (Wire.available()) { // slave may send less than requested
     char instruction = Wire.read(); // receive a byte as character
     int remote = Wire.read();
-    //Serial.print("Data: " + String(instruction) + "," + String(remote));
-    //Serial.println(); 
     processRTSCommand(instruction, remote);
   }
 }
@@ -103,8 +100,6 @@ void readSerial() {
       Serial.read();
       delay(10);
     }
-    //Serial.print("Data: " + String(instruction) + "," + String(remote));
-    //Serial.println(); 
     processRTSCommand(instruction, remote);
   }  
 }
